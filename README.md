@@ -232,8 +232,6 @@ docker build -t authify .
 docker run -p 8080:8080 authify
 ```
 
-## 🤝 Contributing
-
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
