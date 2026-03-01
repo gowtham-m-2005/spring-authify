@@ -1,0 +1,24 @@
+### Secrets ###
+.env
+
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+
+### Logs ###
+*.log
+
+### OS files ###
+.DS_Store
+Thumbs.db
+
+### Spring Boot ###
+application-local.yml
+application-dev.yml
+
+### Kotlin (auto-generated) ###
+*.kotlin_module

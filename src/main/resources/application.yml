@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: authify
+  datasource:
+    url: jdbc:postgresql://localhost:8092/authify-db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          from: mgowtham7577@gmail.com
+          starttls:
+            enable: true
+        protocol: smtp
+
+jwt:
+  secret:
+    key: ${JWT_SECRET}
+
+server:
+  servlet:
+    context-path: /api/v1.0
