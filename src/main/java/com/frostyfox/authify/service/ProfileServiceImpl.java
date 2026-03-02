@@ -88,6 +88,58 @@ public class ProfileServiceImpl implements ProfileService {
         userDao.save(userEntity);
     }
 
+    @Override
+    public void sendOtp(String email) {
+        UserEntity userEntity = userDao.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found : " + email));
+
+        if(userEntity.getIsAccountVerified() != null && userEntity.getIsAccountVerified()){
+            return;
+        }
+
+        //generate otp
+        String otp = String.valueOf(ThreadLocalRandom.current().nextInt(1000000,10000000));
+        long expiryTime = System.currentTimeMillis() + (24 * 60 * 60 * 1000);
+
+        userEntity.setVerifyOtp(otp);
+        userEntity.setVerifyOtpExpireAt(expiryTime);
+
+        userDao.save(userEntity);
+
+        try {
+            emailService.sendOtpEmail(userEntity.getEmail(), otp);
+        }catch (Exception e){
+            throw  new RuntimeException("Unable to send email");
+        }
+    }
+
+    @Override
+    public void verifyOtp(String email, String otp) {
+        UserEntity userEntity = userDao.findByEmail(email)
+                .orElseThrow(() -> new  UsernameNotFoundException("User not found : " + email));
+
+        if(userEntity.getVerifyOtp() == null || !userEntity.getVerifyOtp().equals(otp)){
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        if(userEntity.getVerifyOtpExpireAt() < System.currentTimeMillis()){
+            throw new RuntimeException("OTP Expired");
+        }
+
+        userEntity.setIsAccountVerified(true);
+        userEntity.setVerifyOtp(null);
+        userEntity.setVerifyOtpExpireAt(0L);
+
+        userDao.save(userEntity);
+    }
+
+    @Override
+    public String getLoggedInUserId(String email) {
+        UserEntity userEntity =userDao.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found" + email));
+        return userEntity.getUserId();
+    }
+
     private UserEntity convertToUserEntity(ProfileRequest request){
         return UserEntity.builder()
                 .email(request.getEmail())
