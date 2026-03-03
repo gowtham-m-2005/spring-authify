@@ -6,6 +6,7 @@ import com.frostyfox.authify.io.ResetPasswordRequest;
 import com.frostyfox.authify.service.AppUserDetailsService;
 import com.frostyfox.authify.service.ProfileService;
 import com.frostyfox.authify.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -108,6 +109,7 @@ public class AuthController {
 
     @PostMapping("/verify-otp")
     public void verifyEmail(@RequestBody Map<String, Object> request, @CurrentSecurityContext(expression = "authentication?.name") String email){
+        System.out.println("AuthController: verifyEmail called with email: " + email);
         if(request.get("otp").toString() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing Details");
         }
@@ -117,5 +119,25 @@ public class AuthController {
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }
+
+    @PostMapping("/test-security")
+    public ResponseEntity<String> testSecurity(@CurrentSecurityContext(expression = "authentication?.name") String email){
+        return ResponseEntity.ok("Security context email: " + email);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response){
+        ResponseCookie responseCookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .body("Logged out Successfully");
     }
 }

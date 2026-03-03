@@ -49,7 +49,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found : " + email));
 
         //Generate otp
-        String otp = String.valueOf(ThreadLocalRandom.current().nextInt(1000000,10000000));
+        String otp = String.valueOf(ThreadLocalRandom.current().nextInt(100000,1000000));
 
         //calculate expiry time(current time + 15 mins in ms)
         long expiryTime = System.currentTimeMillis() + (15 *60 * 1000);
@@ -98,7 +98,7 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         //generate otp
-        String otp = String.valueOf(ThreadLocalRandom.current().nextInt(1000000,10000000));
+        String otp = String.valueOf(ThreadLocalRandom.current().nextInt(100000,1000000));
         long expiryTime = System.currentTimeMillis() + (24 * 60 * 60 * 1000);
 
         userEntity.setVerifyOtp(otp);
